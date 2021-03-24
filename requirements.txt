@@ -1,0 +1,9 @@
+discord==1.0.1
+PyNaCl
+youtube_dl
+urllib3
+asyncpraw
+googletrans==3.1.0a0
+schedule
+datetime
+googlemaps
