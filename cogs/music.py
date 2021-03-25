@@ -375,6 +375,9 @@ class musicbot():
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if voice.is_playing():
             voice.pause()
+
+            await ctx.message.add_reaction("▶️")
+
         else:
             await ctx.send("`Currently no audio is playing.`")
 
@@ -382,7 +385,11 @@ class musicbot():
     async def resume(self, ctx):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if voice.is_paused():
+
             voice.resume()
+
+            await ctx.message.add_reaction("⏸️️")
+
         else:
             await ctx.send("`Currently no audio is playing.`")
 
@@ -396,6 +403,9 @@ class musicbot():
                 pass
 
             voice.stop()
+
+            await ctx.message.add_reaction("🛑")
+
         else:
             await ctx.send("`Currently no audio is playing.`")
 
@@ -403,9 +413,17 @@ class musicbot():
 
     @commands.command()
     async def loop(self, ctx):
-        self.looping = True
 
-        await ctx.send("`Now looping the current song.`")
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+        if voice.is_playing():
+
+            self.looping = True
+
+            await ctx.message.add_reaction("🔁")
+
+        else:
+            await ctx.send("`Currently no audio is playing.`")
 
     @commands.command()
     async def getsongs(self, ctx):
