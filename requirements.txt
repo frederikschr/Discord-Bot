@@ -1,6 +1,6 @@
 discord==1.0.1
 PyNaCl
-dotenv
+python-dotenv
 youtube_dl
 urllib3
 asyncpraw
