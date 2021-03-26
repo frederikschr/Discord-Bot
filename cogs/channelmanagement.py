@@ -58,6 +58,8 @@ class channelmanagement(commands.Cog):
     @commands.command()
     async def mainstreit(self, ctx):
 
+        await ctx.message.delete()
+
         if ctx.author.voice and ctx.author.voice.channel:
             channel = ctx.author.voice.channel
 
@@ -79,6 +81,9 @@ class channelmanagement(commands.Cog):
 
     @commands.command()
     async def clearmainstreit(self, ctx):
+
+        await ctx.message.delete()
+
         for channel in list(ctx.message.guild.text_channels):
             if channel.name in self.channels:
                 await channel.delete()
