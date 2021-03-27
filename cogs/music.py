@@ -134,7 +134,7 @@ class musicbot():
                         return
 
 
-         print("no error. everything's fine.")
+        print("no error. everything's fine.")
 
         async with ctx.typing():
 
