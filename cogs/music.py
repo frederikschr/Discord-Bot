@@ -7,7 +7,6 @@ import json
 from requestings.get_url import get_url
 import asyncio
 
-@
 
 class musicbot():
 
@@ -92,51 +91,8 @@ class musicbot():
                 self.looping = False
                 print("Finished playing...")
 
-
     @commands.command()
     async def play(self, ctx, *, url):
-
-        for file in os.listdir(f"./guilds/{ctx.guild.id}"):
-            try:
-                if file.endswith(".mp3"):
-                    file = os.path.join(f"./guilds/{ctx.guild.id}", file)
-                    os.remove(file)
-                    print(f"Removed file: {file}")
-
-            except Exception:
-
-                print("error because song is playing. adding to queue")
-
-                async with ctx.typing():
-                    try:
-                        with open("./json/playlists.json", "r") as f:
-                            data = json.load(f)
-                            temp = data[url]
-                            for song in temp:
-                                print(song)
-                                self.song_queue.append(song)
-
-                            queue_index = len(self.song_queue)
-                            embed = discord.Embed(title=f"In queue position: {queue_index}", color=discord.Color.red())
-                            embed.add_field(name=f"{temp}", value=f"{ctx.author}")
-                            await ctx.send(embed=embed)
-
-                            return
-
-                    except Exception:
-
-                        video = get_url(f"{url}")
-                        self.song_queue.append(video)
-                        queue_index = len(self.song_queue)
-
-                        embed = discord.Embed(title=f"In queue position: {queue_index}", color=discord.Color.red())
-                        embed.add_field(name=f"{video}", value=f"{ctx.author}")
-                        await ctx.send(embed=embed)
-
-                        return
-
-
-        print("no error. everything's fine.")
 
         async with ctx.typing():
 
@@ -153,6 +109,48 @@ class musicbot():
 
                 return
 
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+            if not voice.is_playing():
+
+                for file in os.listdir(f"./guilds/{ctx.guild.id}"):
+
+                    if file.endswith(".mp3"):
+                        file = os.path.join(f"./guilds/{ctx.guild.id}", file)
+                        os.remove(file)
+                        print(f"Removed file: {file}")
+
+            else:
+
+                try:
+                    with open("./json/playlists.json", "r") as f:
+                        data = json.load(f)
+                        temp = data[url]
+                        for song in temp:
+                            print(song)
+                            self.song_queue.append(song)
+
+                        queue_index = len(self.song_queue)
+                        embed = discord.Embed(title=f"In queue", color=discord.Color.red())
+                        embed.add_field(name="Positon", value=queue_index, inline=False)
+                        embed.add_field(name=f"{temp}", value=f"{ctx.author}")
+                        await ctx.send(embed=embed)
+
+                        return
+
+                except Exception:
+
+                    video = get_url(f"{url}")
+                    self.song_queue.append(video)
+                    queue_index = len(self.song_queue)
+
+                    embed = discord.Embed(title=f"In queue", color=discord.Color.red())
+                    embed.add_field(name="Positon", value=queue_index, inline=False)
+                    embed.add_field(name=f"{video}", value=f"{ctx.author}")
+                    await ctx.send(embed=embed)
+
+                    return
+
             with open("./json/playlists.json", "r") as f:
                 data = json.load(f)
                 try:
@@ -168,7 +166,7 @@ class musicbot():
                     self.song_queue.append(video)
                     print(f"Song Queue 1: {self.song_queue}")
 
-        await self.play_next_song(self, ctx)
+            await self.play_next_song(self, ctx)
 
     @commands.command()
     async def download(self, ctx, song_name: str, song_artist, url: str):
@@ -284,7 +282,7 @@ class musicbot():
     @commands.command()
     async def clearplaylist(self, ctx, playlist_name: str):
 
-        with open("./json/playlists.json","r") as f:
+        with open("./json/playlists.json", "r") as f:
             data = json.load(f)
 
             try:
@@ -298,7 +296,7 @@ class musicbot():
             except Exception:
                 await ctx.send("`Playlist not found.`")
 
-        with open("./json/playlists.json","w") as f:
+        with open("./json/playlists.json", "w") as f:
             json.dump(data, f, indent=4)
 
     @commands.command()
@@ -309,7 +307,6 @@ class musicbot():
             embed = discord.Embed(title="Playlists", color=discord.Color.red())
 
             for key, value in data.items():
-
                 songs = ", ".join(value)
 
                 embed.add_field(name=f"{key}", value=f"{songs}", inline=False)
@@ -332,7 +329,7 @@ class musicbot():
                 pass
 
             await self.play_next_song(self, ctx)
-            await ctx.send("`Skipped to the next song.`")
+            await ctx.message.add_reaction("⏭️")
 
         except Exception:
             pass
@@ -366,7 +363,6 @@ class musicbot():
 
         else:
             await ctx.send(f"`No song named: {song}`")
-
 
     @commands.command()
     async def leave(self, ctx):
@@ -450,6 +446,7 @@ class musicbot():
 
             await ctx.send(embed=embed)
 
+
 class manager(commands.Cog):
 
     def __init__(self, client):
@@ -461,7 +458,6 @@ class manager(commands.Cog):
     async def play(self, ctx, *, url):
         for key, value in self.guilds.items():
             if key == str(ctx.guild.id):
-
                 await value.play(value, ctx, url=url)
                 return
 
@@ -517,7 +513,6 @@ class manager(commands.Cog):
         for key, value in self.guilds.items():
 
             if key == str(ctx.guild.id):
-
                 await value.createplaylist(value, ctx, playlist_name)
                 return
 
@@ -574,7 +569,6 @@ class manager(commands.Cog):
         for key, value in self.guilds.items():
 
             if key == str(ctx.guild.id):
-
                 await value.addplaylist(value, ctx, playlist_name, url)
                 return
 
@@ -589,7 +583,6 @@ class manager(commands.Cog):
         for key, value in self.guilds.items():
 
             if key == str(ctx.guild.id):
-
                 await value.skip(value, ctx)
                 return
 
@@ -696,6 +689,7 @@ class manager(commands.Cog):
         self.guilds[str(ctx.guild.id)] = object_name
 
         await object_name.getplaylists(object_name, ctx)
+
 
 def setup(client):
     client.add_cog(manager(client))
