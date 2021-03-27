@@ -172,7 +172,7 @@ class minesweeper():
                         bomb_length = len(self.bombs) - 1
                         no_bomb_squares = 15 - bomb_length
 
-                        if self.count == no_bomb_squares:
+                        if self.count == no_bomb_squares and self.count != 1:
                             embed = discord.Embed(name="Minesweeper", color=discord.Color.red())
 
                             self.running = False
