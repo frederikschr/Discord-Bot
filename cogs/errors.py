@@ -28,5 +28,7 @@ class errors(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             await ctx.send("`Please choose the correct datatype.`")
 
+    @
+
 def setup(client):
     client.add_cog(errors(client))

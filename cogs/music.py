@@ -102,6 +102,9 @@ class musicbot():
                     print(f"Removed file: {file}")
 
             except Exception:
+
+                print("error because song is playing. adding to queue")
+
                 async with ctx.typing():
                     try:
                         with open("./json/playlists.json", "r") as f:
@@ -129,6 +132,9 @@ class musicbot():
                         await ctx.send(embed=embed)
 
                         return
+
+
+         print("no error. everything's fine.")
 
         async with ctx.typing():
 
