@@ -72,8 +72,10 @@ class musicbot():
 
                 print(f"Song Queue: {self.song_queue}")
 
+                loop = asyncio.get_event_loop()
+
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                           after=lambda e: asyncio.run(self.play_next_song(self, ctx)))
+                           after=lambda e: loop.run_until_complete(self.play_next_song(ctx)))
 
             except IndexError:
                 if not self.song_queue:
