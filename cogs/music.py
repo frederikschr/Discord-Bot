@@ -84,8 +84,10 @@ class musicbot():
             try:
                 await asyncio.sleep(3)
 
+                loop = asyncio.get_event_loop()
+
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                           after=lambda e: asyncio.run(self.play_next_song(self, ctx)))
+                           after=lambda e: loop.run_until_complete(self.play_next_song(ctx)))
 
             except AttributeError:
                 self.looping = False
@@ -380,7 +382,7 @@ class musicbot():
         if voice.is_playing():
             voice.pause()
 
-            await ctx.message.add_reaction("▶️")
+            await ctx.message.add_reaction("☑️")
 
         else:
             await ctx.send("`Currently no audio is playing.`")
@@ -392,7 +394,7 @@ class musicbot():
 
             voice.resume()
 
-            await ctx.message.add_reaction("⏸️️")
+            await ctx.message.add_reaction("☑️")
 
         else:
             await ctx.send("`Currently no audio is playing.`")
