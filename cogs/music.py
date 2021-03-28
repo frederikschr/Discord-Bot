@@ -6,7 +6,9 @@ from discord.utils import get
 import json
 from requestings.get_url import get_url
 import asyncio
+import nest_asyncio
 
+nest_asyncio.apply()
 
 class musicbot():
 
