@@ -10,3 +10,4 @@ datetime
 googlemaps
 phue
 asyncio==3.4.3
+nest-asyncio
