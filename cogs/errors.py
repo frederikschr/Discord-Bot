@@ -22,13 +22,11 @@ class errors(commands.Cog):
         elif isinstance(error, commands.NotOwner):
             await ctx.send("`Only the Owner can use this command.`")
 
-        #elif isinstance(error, commands.CommandInvokeError):
-            #pass
-
         elif isinstance(error, commands.BadArgument):
             await ctx.send("`Please choose the correct datatype.`")
 
-    @
+        #elif isinstance(error, commands.CommandInvokeError):
+            #pass
 
 def setup(client):
     client.add_cog(errors(client))
