@@ -50,7 +50,7 @@ class numbergame():
 
             if ctx.author not in self.numbers.keys():
 
-                if number in range(self.first_number, self.second_number):
+                if number >= self.first_number - 1 and number <= self.second_number + 1:
                     self.numbers[str(ctx.author)] = number
 
                     await ctx.send(f"`{ctx.author} guessed: {number}`")
@@ -142,7 +142,7 @@ class manager(commands.Cog):
         await object_name.guess(object_name, ctx, num)
 
     @commands.command()
-    async def playgame(self, ctx, num):
+    async def playgame(self, ctx):
         for key, value in self.guilds.items():
             if key == str(ctx.guild.id):
                 await value.playgame(value, ctx)
