@@ -16,7 +16,7 @@ class numbergame():
         self.running = False
 
     @commands.command()
-    async def startnumbergame(self, ctx, first_number, second_number):
+    async def numbergame(self, ctx, first_number, second_number):
 
         if not self.running:
 
@@ -27,12 +27,18 @@ class numbergame():
                 self.first_number = first_number
                 self.second_number = second_number
 
+                await ctx.send(f"`Picked a random number between {first_number} and {second_number}`")
+
             else:
                 self.first_number = 0
                 self.second_number = 100
 
+                await ctx.send(f"`Picked a random number between 1 and 100`")
+
             self.random_number = random.randint(self.first_number, self.second_number)
             self.second_number += 1
+
+            print(f"Random number is: {self.random_number}")
 
         else:
             await ctx.send("`Game already running.`")
@@ -110,17 +116,17 @@ class manager(commands.Cog):
         self.ids = []
 
     @commands.command()
-    async def startnumbergame(self, ctx, first_number: int = None, second_number: int = None):
+    async def numbergame(self, ctx, first_number: int = None, second_number: int = None):
         for key, value in self.guilds.items():
             if key == str(ctx.guild.id):
-                await value.startnumbergame(value, ctx, first_number, second_number)
+                await value.numbergame(value, ctx, first_number, second_number)
                 return
 
         object_name = ctx.guild.id
         object_name = numbergame(self.client)
         self.guilds[str(ctx.guild.id)] = object_name
 
-        await object_name.startnumbergame(object_name, ctx, first_number, second_number)
+        await object_name.numbergame(object_name, ctx, first_number, second_number)
 
     @commands.command()
     async def guess(self, ctx, num):
