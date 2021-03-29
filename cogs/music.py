@@ -8,8 +8,6 @@ from requestings.get_url import get_url
 import asyncio
 import nest_asyncio
 
-nest_asyncio.apply()
-
 class musicbot():
 
     def __init__(self, client):
@@ -76,6 +74,8 @@ class musicbot():
 
                 loop = asyncio.get_event_loop()
 
+                nest_asyncio.apply(loop)
+
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
                            after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
 
@@ -89,6 +89,8 @@ class musicbot():
                 await asyncio.sleep(3)
 
                 loop = asyncio.get_event_loop()
+
+                nest_asyncio.apply(loop)
 
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
                            after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
