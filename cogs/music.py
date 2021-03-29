@@ -74,7 +74,7 @@ class musicbot():
 
                 loop = asyncio.get_event_loop()
 
-                nest_asyncio.apply(loop)
+                nest_asyncio.apply()
 
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
                            after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
@@ -90,7 +90,7 @@ class musicbot():
 
                 loop = asyncio.get_event_loop()
 
-                nest_asyncio.apply(loop)
+                nest_asyncio.apply()
 
                 voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
                            after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
