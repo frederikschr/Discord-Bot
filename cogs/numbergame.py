@@ -3,6 +3,7 @@ from discord.ext import commands
 import random
 import operator
 
+
 class numbergame():
 
     def __init__(self, client):
@@ -41,10 +42,16 @@ class numbergame():
             print(f"Random number is: {self.random_number}")
 
         else:
-            await ctx.send("`Game already running.`")
+            await ctx.send("`Stopped the current game.`")
+
+            self.running = False
+            self.numbers.clear()
+            self.first_number = None
+            self.second_number = None
+            self.random_number = None
 
     @commands.command()
-    async def guess(self, ctx, number: int):
+    async def guess(self, ctx, number):
 
         if self.running:
 
@@ -68,7 +75,6 @@ class numbergame():
     async def playgame(self, ctx):
 
         if self.running:
-
             for key, value in self.numbers.items():
 
                 if value >= self.random_number:
@@ -107,6 +113,7 @@ class numbergame():
         else:
             await ctx.send("`No game running.`")
 
+
 class manager(commands.Cog):
 
     def __init__(self, client):
@@ -129,7 +136,7 @@ class manager(commands.Cog):
         await object_name.numbergame(object_name, ctx, first_number, second_number)
 
     @commands.command()
-    async def guess(self, ctx, num):
+    async def guess(self, ctx, num: int):
         for key, value in self.guilds.items():
             if key == str(ctx.guild.id):
                 await value.guess(value, ctx, num)
@@ -154,11 +161,6 @@ class manager(commands.Cog):
 
         await object_name.playgame(object_name, ctx)
 
+
 def setup(client):
     client.add_cog(manager(client))
-
-
-
-
-
-
