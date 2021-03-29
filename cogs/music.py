@@ -6,7 +6,6 @@ from discord.utils import get
 import json
 from requestings.get_url import get_url
 import asyncio
-import nest_asyncio
 
 class musicbot():
 
@@ -72,12 +71,15 @@ class musicbot():
 
                 print(f"Song Queue: {self.song_queue}")
 
-                loop = asyncio.get_event_loop()
+                try:
 
-                nest_asyncio.apply()
+                    loop = asyncio.get_event_loop()
 
-                voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                           after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
+                    voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
+                               after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
+
+                except RuntimeError:
+                    pass
 
             except IndexError:
                 if not self.song_queue:
@@ -88,12 +90,15 @@ class musicbot():
             try:
                 await asyncio.sleep(3)
 
-                loop = asyncio.get_event_loop()
+                try:
 
-                nest_asyncio.apply()
+                    loop = asyncio.get_event_loop()
 
-                voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                           after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
+                    voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
+                               after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
+
+                except RuntimeError:
+                    pass
 
             except AttributeError:
                 self.looping = False
