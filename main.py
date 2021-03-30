@@ -21,7 +21,7 @@ async def on_ready():
 async def on_guild_join(guild):
 
     embed = discord.Embed(title="Hello there!", color=discord.Color.red())
-    embed.add_field(name=f"Hello {guild} members", value="I'm a Discord Bot written in Python by FreddyS#5025. Thanks for adding me to your server")
+    embed.add_field(name=f"What's up {guild} members", value="I'm a Discord Bot made by FreddyS#5025. Thanks for adding me to your server")
     embed.set_author(name=client.user.name, icon_url=client.user.avatar_url)
     embed.add_field(name="Information", value="If you want to get to know all my features, simply type: f help", inline=False)
     embed.add_field(name="Important", value="If you want to use all my features, make sure to give me admin permissions", inline=False)
@@ -58,6 +58,9 @@ async def testing(ctx, test_mode: bool):
         await ctx.send("`Unloaded all extensions.`")
 
     else:
+
+        await client.change_presence(activity=discord.Game(name="FREDO BOT | f help"))
+
         for file in os.listdir("./cogs"):
             if file.endswith(".py") and file != "__init__.py":
                 try:

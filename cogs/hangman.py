@@ -15,7 +15,7 @@ class hangman():
         self.death_count = 0
         self.host =  None
         self.host_name = None
-        self.word = None
+        self.word = ""
 
     def has_won(self):
         for char in self.visible_chars:
@@ -33,7 +33,7 @@ class hangman():
         self.word_characters = []
         self.visible_chars = []
         self.death_count = 0
-        self.word = None
+        self.word = ""
 
     @commands.command()
     async def hangman(self, ctx, *players: discord.Member):
@@ -75,7 +75,9 @@ class hangman():
     @commands.command(aliases=["s"])
     async def setword(self, ctx, word: str):
         if self.running:
-            if not self.word:
+
+            if self.word == "":
+
                 if ctx.author.id == self.host:
                     if len(word) <= 10:
 
@@ -86,7 +88,11 @@ class hangman():
                         for character in str(self.word):
                             self.word_characters.append(character)
 
-                        await ctx.author.send(f"`You picked the word: {self.word}`")
+                        try:
+                            await ctx.author.send(f"`You picked the word: {self.word}`")
+
+                        except Exception:
+                            pass
 
                         embed = discord.Embed(title="Hangman", description=f"{ctx.author}", color=discord.Color.red())
 
