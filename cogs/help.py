@@ -12,7 +12,7 @@ class help(commands.Cog):
 
         author_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
-        embed = discord.Embed(title="Help", description="Open a page by adding with the page's number", color=discord.Color.red())
+        embed = discord.Embed(title="Help", description="Open a page by reacting with the page's number", color=discord.Color.red())
 
         embed.add_field(name="Arcade", value="Page 1")
         embed.add_field(name="Music", value="Page 2")
@@ -109,7 +109,7 @@ class help(commands.Cog):
                     elif emoji == "6️⃣":
 
                         embed = discord.Embed(title="Random", description="Offering features that have to do with random selections", color=discord.Color.red())
-                        embed.add_field(name="Numbergame",value="• setup: first number, second number\n• guess: number\n• playgame")
+                        embed.add_field(name="Numbergame",value="• numbergame: first number, second number\n• guess: number\n• playgame")
                         embed.add_field(name="Random pick", value="• random: elements(undetermined amount)")
                         embed.add_field(name="Coinflip", value="• coin")
 
