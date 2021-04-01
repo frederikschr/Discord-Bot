@@ -7,6 +7,36 @@ import json
 from requestings.get_url import get_url
 import asyncio
 
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'noplaylist': True,
+    'quiet': True,
+    'no_warnings': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+}
+
+class YTDL():
+
+    def __init__(self, url=None):
+
+        self.ydl = youtube_dl.YoutubeDL(ydl_opts)
+
+        if url:
+            self.meta = self.ydl.extract_info(url, download=False)
+
+    async def get_url(self,keywords):
+        return get_url(str(keywords))
+
+    async def get_video_length(self):
+        return self.meta["duration"]
+
+    async def get_video_title(self):
+        return self.meta["title"]
+
 class musicbot():
 
     def __init__(self, client):
@@ -46,15 +76,10 @@ class musicbot():
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([self.song_queue[0]])
                     meta = ydl.extract_info(self.song_queue[0], download=False)
-                    video_name = (meta["title"])
+                    video_name = meta["title"]
 
                     try:
-                        embed = discord.Embed(
-                            title="Now Playing",
-                            color=discord.Color.red(),
-                            description=f"[{video_name}]({self.song_queue[0]})",
-                            value=f"{ctx.author}")
-
+                        embed = discord.Embed(title="Now Playing", color=discord.Color.red(), description=f"[{video_name}]({self.song_queue[0]})", value=f"{ctx.author}")
                         await ctx.send(embed=embed)
 
                     except RuntimeError:
@@ -71,15 +96,10 @@ class musicbot():
 
                 print(f"Song Queue: {self.song_queue}")
 
-                try:
+                loop = asyncio.get_event_loop()
 
-                    loop = asyncio.get_event_loop()
-
-                    voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                               after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
-
-                except RuntimeError:
-                    pass
+                voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
+                           after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
 
             except IndexError:
                 if not self.song_queue:
@@ -90,15 +110,10 @@ class musicbot():
             try:
                 await asyncio.sleep(3)
 
-                try:
+                loop = asyncio.get_event_loop()
 
-                    loop = asyncio.get_event_loop()
-
-                    voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
-                               after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
-
-                except RuntimeError:
-                    pass
+                voice.play(discord.FFmpegPCMAudio(f"./guilds/{ctx.guild.id}/song.mp3"),
+                           after=lambda e: loop.run_until_complete(self.play_next_song(self, ctx)))
 
             except AttributeError:
                 self.looping = False
@@ -110,7 +125,6 @@ class musicbot():
         async with ctx.typing():
 
             if ctx.author.voice and ctx.author.voice.channel:
-
                 channel = ctx.author.voice.channel
 
                 if not self.bot_is_connected(ctx):
@@ -119,67 +133,107 @@ class musicbot():
                     pass
             else:
                 await ctx.send("`You are not connected to a voice channel.`")
-
                 return
 
             voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
 
-            if not voice.is_playing():
+            video_url = await YTDL().get_url(keywords=url)
 
-                for file in os.listdir(f"./guilds/{ctx.guild.id}"):
+            if await YTDL(url=video_url).get_video_length() <= 600:
 
-                    if file.endswith(".mp3"):
-                        file = os.path.join(f"./guilds/{ctx.guild.id}", file)
-                        os.remove(file)
-                        print(f"Removed file: {file}")
+                if not voice.is_playing():
 
-            else:
+                    for file in os.listdir(f"./guilds/{ctx.guild.id}"):
+                        if file.endswith(".mp3"):
+                            file = os.path.join(f"./guilds/{ctx.guild.id}", file)
+                            os.remove(file)
+                            print(f"Removed file: {file}")
 
-                try:
-                    with open("./json/playlists.json", "r") as f:
-                        data = json.load(f)
-                        temp = data[url]
-                        for song in temp:
-                            print(song)
-                            self.song_queue.append(song)
+                    self.song_queue.append(video_url)
 
-                        queue_index = len(self.song_queue)
-                        embed = discord.Embed(title=f"In queue", color=discord.Color.red())
-                        embed.add_field(name="Positon", value=queue_index, inline=False)
-                        embed.add_field(name=f"{temp}", value=f"{ctx.author}")
-                        await ctx.send(embed=embed)
+                else:
+                    video_title = await YTDL(url=video_url).get_video_title()
 
-                        return
-
-                except Exception:
-
-                    video = get_url(f"{url}")
-                    self.song_queue.append(video)
+                    self.song_queue.append(video_url)
                     queue_index = len(self.song_queue)
 
-                    embed = discord.Embed(title=f"In queue", color=discord.Color.red())
+                    embed = discord.Embed(title=f"In queue", description=f"[{video_title}]({video_url})", color=discord.Color.red())
                     embed.add_field(name="Positon", value=queue_index, inline=False)
-                    embed.add_field(name=f"{video}", value=f"{ctx.author}")
-                    await ctx.send(embed=embed)
 
+                    await ctx.send(embed=embed)
                     return
 
+                await self.play_next_song(self, ctx)
+
+            else:
+                await ctx.send("`Only able to download songs shorter than 10 minutes.`")
+
+    @commands.command()
+    async def playlist(self, ctx, playlist_name):
+
+        async with ctx.typing():
+
+            if ctx.author.voice and ctx.author.voice.channel:
+                channel = ctx.author.voice.channel
+
+                if not self.bot_is_connected(ctx):
+                    await channel.connect()
+                else:
+                    pass
+            else:
+                await ctx.send("`You are not connected to a voice channel.`")
+                return
+
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+        if not voice.is_playing():
+
+            for file in os.listdir(f"./guilds/{ctx.guild.id}"):
+                if file.endswith(".mp3"):
+                    file = os.path.join(f"./guilds/{ctx.guild.id}", file)
+                    os.remove(file)
+                    print(f"Removed file: {file}")
+
+        try:
             with open("./json/playlists.json", "r") as f:
                 data = json.load(f)
-                try:
-                    temp = data[url]
-                    for song in temp:
-                        print(song)
-                        self.song_queue.append(song)
+                playlist = data[playlist_name]
 
-                except Exception:
+                playlist_songs = []
 
-                    video = get_url(f"{url}")
-                    print(f"Added Video: {video}")
-                    self.song_queue.append(video)
-                    print(f"Song Queue 1: {self.song_queue}")
+                for song in playlist:
+                    print(song)
+                    playlist_songs.append(song)
 
-            await self.play_next_song(self, ctx)
+        except Exception:
+            await ctx.send("`No playlist found.`")
+            return
+
+        if not voice.is_playing():
+
+            for file in os.listdir(f"./guilds/{ctx.guild.id}"):
+                if file.endswith(".mp3"):
+                    file = os.path.join(f"./guilds/{ctx.guild.id}", file)
+                    os.remove(file)
+                    print(f"Removed file: {file}")
+
+            for song in playlist_songs:
+                self.song_queue.append(song)
+
+        else:
+            for song in playlist_songs:
+                self.song_queue.append(song)
+
+            queue_index = len(self.song_queue)
+
+            embed = discord.Embed(title=f"In queue", color=discord.Color.red())
+            embed.add_field(name="Playlist", value=playlist_name)
+            embed.add_field(name="Positon", value=queue_index, inline=False)
+
+            await ctx.send(embed=embed)
+            return
+
+        await self.play_next_song(self, ctx)
 
     @commands.command()
     async def download(self, ctx, song_name: str, song_artist, url: str):
@@ -479,6 +533,19 @@ class manager(commands.Cog):
         self.guilds[str(ctx.guild.id)] = object_name
 
         await object_name.play(object_name, ctx, url=url)
+
+    @commands.command()
+    async def playlist(self, ctx, playlist_name):
+        for key, value in self.guilds.items():
+            if key == str(ctx.guild.id):
+                await value.playlist(value, ctx, playlist_name)
+                return
+
+        object_name = ctx.guild.id
+        object_name = musicbot(self.client)
+        self.guilds[str(ctx.guild.id)] = object_name
+
+        await object_name.playlist(object_name, ctx, playlist_name)
 
     @commands.command()
     async def playfile(self, ctx, *, song):

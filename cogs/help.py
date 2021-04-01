@@ -63,8 +63,6 @@ class help(commands.Cog):
 
                     emoji = payload.emoji.name
 
-                    #self.messages.remove(message)
-
                     if emoji == "1️⃣":
 
                         embed = discord.Embed(title="Arcade", description="Offering many fun games that you can play", color=discord.Color.red())
@@ -76,7 +74,7 @@ class help(commands.Cog):
                     elif emoji == "2️⃣":
 
                         embed = discord.Embed(title="Music", description="Offering music service from youtube as well as playlist features", color=discord.Color.red())
-                        embed.add_field(name="Play songs", value="• play: songname\n• playfile: filename")
+                        embed.add_field(name="Play songs", value="• play: songname\n• playlist: playlistname\n• playfile: filename")
                         embed.add_field(name="Moderation", value="• pause\n• resume\n• stop\n• skip\n• leave")
                         embed.add_field(name="Playlists", value="• createplaylist: playlistname\n• deleteplaylist: playlistname\n• addplaylist: playlistname, url\n• removeplaylist: playlistname, url\n• clearplaylist: playlistname")
                         embed.add_field(name="Information", value="• getplaylists\n• getsongs")
