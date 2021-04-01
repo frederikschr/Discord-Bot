@@ -9,9 +9,7 @@ import asyncio
 
 ydl_opts = {
     'format': 'bestaudio/best',
-    'noplaylist': True,
     'quiet': True,
-    'no_warnings': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
@@ -22,13 +20,12 @@ ydl_opts = {
 class YTDL():
 
     def __init__(self, url=None):
-
         self.ydl = youtube_dl.YoutubeDL(ydl_opts)
 
         if url:
             self.meta = self.ydl.extract_info(url, download=False)
 
-    async def get_url(self,keywords):
+    async def get_url(self, keywords):
         return get_url(str(keywords))
 
     async def get_video_length(self):
@@ -66,6 +63,9 @@ class musicbot():
                 ydl_opts = {
                     'outtmpl': f'./guilds/{ctx.guild.id}/%(title)s.%(ext)s',
                     'format': 'bestaudio/best',
+                    'noplaylist': True,
+                    'quiet': True,
+                    'no_warnings': True,
                     'postprocessors': [{
                         'key': 'FFmpegExtractAudio',
                         'preferredcodec': 'mp3',
@@ -89,7 +89,7 @@ class musicbot():
 
                 for file in os.listdir(f"./guilds/{ctx.guild.id}"):
                     if file.endswith(".mp3"):
-                        old_file = os.path.join(f"./guilds/{ctx.guild.id}", f"{file}")
+                        old_file = os.path.join(f"./guilds/{ctx.guild.id}", str(file))
                         new_file = os.path.join(f"./guilds/{ctx.guild.id}", "song.mp3")
 
                         os.rename(old_file, new_file)
@@ -142,13 +142,6 @@ class musicbot():
             if await YTDL(url=video_url).get_video_length() <= 600:
 
                 if not voice.is_playing():
-
-                    for file in os.listdir(f"./guilds/{ctx.guild.id}"):
-                        if file.endswith(".mp3"):
-                            file = os.path.join(f"./guilds/{ctx.guild.id}", file)
-                            os.remove(file)
-                            print(f"Removed file: {file}")
-
                     self.song_queue.append(video_url)
 
                 else:
@@ -185,14 +178,6 @@ class musicbot():
                 return
 
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-
-        if not voice.is_playing():
-
-            for file in os.listdir(f"./guilds/{ctx.guild.id}"):
-                if file.endswith(".mp3"):
-                    file = os.path.join(f"./guilds/{ctx.guild.id}", file)
-                    os.remove(file)
-                    print(f"Removed file: {file}")
 
         try:
             with open("./json/playlists.json", "r") as f:
