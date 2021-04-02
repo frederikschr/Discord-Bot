@@ -44,6 +44,7 @@ class help(commands.Cog):
         embed.add_field(name="Dead games", value="• addgame: game name\n• removegame: game name\n• getgames")
         embed.add_field(name="Main streit", value="• mainstreit\n• clearmainstreit")
         embed.add_field(name="Add server", value="• addserver: server name")
+        embed.add_field(name="Message server", value="• message: servername, channelindex, message")
         embed.add_field(name="Testing", value="• testing: true/false\n• unload: cog\n• load: cog")
 
         await ctx.author.send(embed=embed)

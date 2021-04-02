@@ -53,5 +53,16 @@ class servermessenger(commands.Cog):
         except KeyError:
             await ctx.send(f"`No server named: {server_name}`")
 
+    @commands.command()
+    @commands.is_owner()
+    async def message(self, ctx, server_name, channel_index: int, *, message):
+        with open("./json/guilds.json") as f:
+            guilds = json.load(f)
+
+        get_server = get_id(self.client, server_name)
+        guild = self.client.get_guild(get_server)
+
+        await guild.text_channels[channel_index - 1].send("`{}`".format(message))
+
 def setup(client):
     client.add_cog(servermessenger(client))
